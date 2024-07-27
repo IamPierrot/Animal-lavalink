@@ -23,7 +23,7 @@ public class Main {
 //    private static JDAListener listener;
 
     public static void main(String[] args) throws InterruptedException {
-        final var token = "MTI2Mjc0MTk4OTY1NzQxNTgwMA.GY2Klv.DwXLj8xb9g992l3gzJa4IjxsMA8St_3eEzXcuU";
+        final var token = "Tokenhere";
         client = new LavalinkClient(Helpers.getUserIdFromToken(token));
 
         client.getLoadBalancer().addPenaltyProvider(new VoiceRegionPenaltyProvider());
