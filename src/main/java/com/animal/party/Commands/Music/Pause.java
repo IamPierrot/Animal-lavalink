@@ -27,8 +27,6 @@ public class Pause extends PrefixCommand {
         client.getOrCreateLink(guild.getIdLong())
                 .getPlayer()
                 .flatMap((player) -> player.setPaused(!player.getPaused()))
-                .subscribe((player) -> {
-                    event.getMessage().reply("Player has been " + (player.getPaused() ? "paused" : "resumed") + "!").queue();
-                });
+                .subscribe((player) -> event.getMessage().reply("Player has been " + (player.getPaused() ? "paused" : "resumed") + "!").queue());
     }
 }
