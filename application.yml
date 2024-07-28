@@ -12,7 +12,7 @@ plugins:
 #      - "ytsearch:%QUERY%" # Will be used if track has no ISRC or no track could be found for the ISRC
 #      #  you can add multiple other fallback sources here
     sources:
-      spotify: false # Enable Spotify
+      spotify: true # Enable Spotify
       youtube: true # Enable YouTube search ssourceource (https://github.com/topi314/LavaSearch)
   youtube:
     enabled: true # Whether this source can be used.
@@ -26,6 +26,14 @@ plugins:
       - ANDROID_TESTSUITE
       - WEB
       - TVHTML5EMBEDDED
+  spotify:
+    clientId: "c6a4da117abe404fbccefa7318021636"
+    clientSecret: "df76e59822584279b52634f96f52dc7a"
+    # spDc: "your sp dc cookie" # the sp dc cookie used for accessing the spotify lyrics api
+    countryCode: "VI" # the country code you want to use for filtering the artists top tracks. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+    playlistLoadLimit: 6 # The number of pages at 100 tracks each
+    albumLoadLimit: 6 # The number of pages at 50 tracks each
+    localFiles: false # Enable local files support with Spotify playlists. Please note `uri` & `isrc` will be `null` & `identifier` will be `"local"`
 lavalink:
   plugins:
     - dependency: "dev.lavalink.youtube:youtube-plugin:1.5.0"

@@ -51,7 +51,7 @@ public class MusicQueue extends PrefixCommand {
                         currentTrack.getInfo().getTitle(),
                         currentTrack.getInfo().getUri(),
                         methods[guildMusicManger.scheduler.getLoopMode()],
-                        String.join("\n", tracks.subList(0, songCount)),
+                        String.join("\n", tracks.subList(0, Math.min(songCount, 5))),
                         nextSongs
                 ))
                 .setFooter("💖 Âm nhạc đi trước tình yêu theo sau", event.getJDA().getSelfUser().getAvatarUrl());
@@ -62,7 +62,7 @@ public class MusicQueue extends PrefixCommand {
     private List<String> formatTracks(Queue<Track> queue) {
         int[] index = {1}; // to keep track of the index
         return queue.stream()
-                .map(track -> String.format("**%d** - %s", index[0]++, formatTrack(track)))
+                .map(track -> String.format("**%d** - %s", index[0] + 2, formatTrack(track)))
                 .collect(Collectors.toList());
     }
 

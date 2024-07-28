@@ -91,10 +91,10 @@ public abstract class PrefixCommand {
     public static void handlePrefixCommand(LavalinkClient client, @NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
 
-        final String prefix = Main.config.getApp().prefix;
-        if (!event.getMessage().getContentRaw().startsWith(prefix)) return;
+        final String PREFIX = Main.config.getApp().prefix;
+        if (!event.getMessage().getContentRaw().startsWith(PREFIX)) return;
 
-        var args = event.getMessage().getContentRaw().substring(prefix.length()).trim().split(" ");
+        var args = event.getMessage().getContentRaw().substring(PREFIX.length()).trim().split(" ");
 
         String command = args[0].toLowerCase();
         List<String> commandArgs = new ArrayList<>(Arrays.asList(args).subList(1, args.length));

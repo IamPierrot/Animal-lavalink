@@ -9,29 +9,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="304aeef7-6625-4962-bae6-402f80f54f50" name="Changes" comment="rm: token bot">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/IshMusic_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/logs/spring.log.2024-07-27.0.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/plugins/lavasrc-plugin-4.2.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/App.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/Music/Loop.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Handlers/LoopMode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
+    <list default="true" id="304aeef7-6625-4962-bae6-402f80f54f50" name="Changes" comment="big upd: update new src, handle loop track, new read config.yml, fix logic handle message.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/Music/MusicQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/Music/MusicQueue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/Music/Play.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/Music/Play.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/Music/Skip.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/Music/Skip.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/Music/Stop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/Music/Stop.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/PrefixCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/PrefixCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Handlers/AudioLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Handlers/AudioLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Handlers/GuildMusicManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Handlers/GuildMusicManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Handlers/TrackScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Handlers/TrackScheduler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Listener/JDAListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Listener/JDAListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Listener/LavaLinkListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Listener/LavaLinkListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,13 +61,13 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "project.structure.last.edited": "Artifacts",
+    "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "io.github.pandier.intellijdiscordrp.settings.DiscordSettingsConfigurable"
   }
 }]]></component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="JAR Application.Lavalink.jar">
     <configuration name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.animal.party.Main" />
       <module name="IshMusic" />
@@ -105,8 +91,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JAR Application.IshMusic.jar" />
         <item itemvalue="JAR Application.Lavalink.jar" />
+        <item itemvalue="JAR Application.IshMusic.jar" />
       </list>
     </recent_temporary>
   </component>
@@ -167,7 +153,15 @@
       <option name="project" value="LOCAL" />
       <updated>1722097187803</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="big upd: update new src, handle loop track, new read config.yml, fix logic handle message.">
+      <option name="closed" value="true" />
+      <created>1722169115419</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1722169115419</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -189,6 +183,7 @@
     <MESSAGE value="feat: upload lavalink config" />
     <MESSAGE value="upd: change lambda" />
     <MESSAGE value="rm: token bot" />
-    <option name="LAST_COMMIT_MESSAGE" value="rm: token bot" />
+    <MESSAGE value="big upd: update new src, handle loop track, new read config.yml, fix logic handle message." />
+    <option name="LAST_COMMIT_MESSAGE" value="big upd: update new src, handle loop track, new read config.yml, fix logic handle message." />
   </component>
 </project>

@@ -21,11 +21,11 @@ public class App {
     public static JDA jda;
 
     private static final int SESSION_INVALID = 4006;
-    private final static String token = Main.config.getApp().token;
+    protected final String TOKEN = Main.config.getApp().TOKEN;
 
     private App() throws InterruptedException {
-        client = new LavalinkClient(Helpers.getUserIdFromToken(token));
-        jda = JDABuilder.createDefault(token)
+        client = new LavalinkClient(Helpers.getUserIdFromToken(TOKEN));
+        jda = JDABuilder.createDefault(TOKEN)
                 .setVoiceDispatchInterceptor(new JDAVoiceUpdateListener(client))
                 .enableIntents(GatewayIntent.GUILD_VOICE_STATES)
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
@@ -35,16 +35,16 @@ public class App {
                 .awaitReady();
     }
 
-    public static void AppInitialize() throws InterruptedException {
+    public static void appInitialize() throws InterruptedException {
         new App();
 
         lavaLinkRegisterEvents(client);
-        LoadLavaLinkEvent();
+        loadLavaLinkEvent();
 
         getLogger(App.class).info("App init!");
     }
 
-    private static void LoadLavaLinkEvent() {
+    private static void loadLavaLinkEvent() {
         client.getLoadBalancer().addPenaltyProvider(new VoiceRegionPenaltyProvider());
 
         client.on(WebSocketClosedEvent.class).subscribe((event) -> {
@@ -73,9 +73,5 @@ public class App {
     }
     public static Logger getLogger(Class<?> clazz) {
         return LoggerFactory.getLogger(clazz);
-    }
-
-    private Map<String, ?> resolveConfig() {
-        return new HashMap<>();
     }
 }

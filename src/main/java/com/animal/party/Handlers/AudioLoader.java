@@ -30,12 +30,9 @@ public class AudioLoader extends AbstractAudioLoadResultHandler {
 
     @Override
     public void onPlaylistLoaded(@NotNull PlaylistLoaded result) {
-        final int trackCount = result.getTracks().size();
-        event.getGuildChannel()
-                .sendMessage("Added " + trackCount + " tracks to the queue from " + result.getInfo().getName() + "!")
-                .queue();
-
         this.guildMusicManager.scheduler.enqueuePlaylist(result.getTracks());
+
+        event.getMessage().replyEmbeds(playlistEmbed(result.getTracks())).queue();
     }
 
     @Override
@@ -78,6 +75,14 @@ public class AudioLoader extends AbstractAudioLoadResultHandler {
                 .setColor(Color.pink).build();
     }
 
-    public void deleteGuildMusic() {
+    private MessageEmbed playlistEmbed(List<Track> playlist) {
+        var trackInfo = playlist.getFirst().getInfo();
+        return new EmbedBuilder()
+                .setAuthor("THÊM PLAYLIST", null, trackInfo.getArtworkUrl())
+                .setDescription("Đã thêm **%d** bài hát vào hàng chờ!"
+                        .formatted(playlist.size()))
+                .setFooter("💖 Âm nhạc đi trước tình yêu theo sau", event.getJDA().getSelfUser().getAvatarUrl())
+                .setThumbnail(trackInfo.getArtworkUrl())
+                .setColor(Color.pink).build();
     }
 }

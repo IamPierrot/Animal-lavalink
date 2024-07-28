@@ -11,7 +11,7 @@ public class Main {
     public static Configuration config;
 
     public static void main(String[] args) throws InterruptedException {
-        String configPath = "";
+        String configPath;
         if (isRunningFromJar()) {
             configPath = "config.yml";
         } else {
@@ -25,7 +25,7 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        App.AppInitialize();
+        App.appInitialize();
     }
 
     public static class Configuration {
@@ -39,7 +39,7 @@ public class Main {
 
         public static class AppConfig {
             public String prefix;
-            public String token;
+            public String TOKEN;
             public boolean global;
         }
 
