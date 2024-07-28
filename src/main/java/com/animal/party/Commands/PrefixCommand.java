@@ -53,7 +53,7 @@ public abstract class PrefixCommand {
             try {
                 Class.forName(command.getName());
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
     }
