@@ -1,0 +1,4 @@
+app:
+  token: token
+  global: true
+  prefix: ish

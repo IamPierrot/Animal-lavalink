@@ -1,21 +1,24 @@
 package com.animal.party.Handlers;
 
-import com.animal.party.Main;
+import com.animal.party.App;
 import dev.arbjerg.lavalink.client.event.TrackEndEvent;
 import dev.arbjerg.lavalink.client.event.TrackStartEvent;
 import dev.arbjerg.lavalink.client.player.Track;
-import dev.arbjerg.lavalink.protocol.v4.Message;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class TrackScheduler {
-    private final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
-    private final GuildMusicManager guildMusicManager;
     public final Queue<Track> queue = new LinkedList<>();
+    private final Logger logger = App.getLogger(TrackScheduler.class);
+    private final GuildMusicManager guildMusicManager;
+    private LoopMode loopMode = LoopMode.NONE;
+    private Track lastTrack;
 
     public TrackScheduler(GuildMusicManager guildMusicManager) {
         this.guildMusicManager = guildMusicManager;
@@ -51,26 +54,40 @@ public class TrackScheduler {
         );
     }
 
+    public void skipTrack() {
+        nextTrack();
+    }
+
     ////////////////// EVENTS
 
     public void onTrackStart(TrackStartEvent event) {
         var track = event.getTrack();
-        logger.info("Track started: {}" , track.getInfo());
+        lastTrack = track;
+        logger.info("Track started: {}", track.getInfo());
+        guildMusicManager.metadata.sendMessageEmbeds(trackEmbed(track)).queue();
     }
 
     public void onTrackEnd(TrackEndEvent event) {
-        var lastTrack = event.getTrack();
         var endReason = event.getEndReason();
 
+        lastTrack = event.getTrack();
         if (endReason.getMayStartNext()) {
-            final var nextTrack = this.queue.poll();
-
-            if (nextTrack != null) {
-                this.startTrack(nextTrack);
+            if (loopMode == LoopMode.TRACK) {
+                startTrack(event.getTrack().makeClone());
+            } else {
+                nextTrack();
             }
         }
     }
     ////////////////////////////////////////
+
+    public synchronized int getLoopMode() {
+        return loopMode.ordinal();
+    }
+
+    public synchronized void setLoopMode(LoopMode loopMode) {
+        this.loopMode = loopMode;
+    }
 
     private void startTrack(Track track) {
         this.guildMusicManager.getLink().ifPresent(
@@ -81,8 +98,49 @@ public class TrackScheduler {
         );
     }
 
-    public void skipTrack() {
-        final var nextTrack = this.queue.poll();
-        this.startTrack(nextTrack);
+    private void nextTrack() {
+        final var nextTrack = queue.poll();
+
+        if (nextTrack != null) {
+            startTrack(nextTrack);
+        } else if (loopMode == LoopMode.TRACK && lastTrack != null) {
+            startTrack(lastTrack.makeClone());
+        } else if (loopMode == LoopMode.QUEUE && !queue.isEmpty()) {
+            var firstTrack = queue.poll();
+            queue.offer(firstTrack);
+            startTrack(firstTrack.makeClone());
+        } else {
+            startTrack(null);
+            guildMusicManager.metadata.sendMessageEmbeds(
+                    new EmbedBuilder()
+                            .setAuthor("Không còn bài hát nào trong danh sách!")
+                            .build()
+            ).queue();
+        }
     }
+
+    private MessageEmbed trackEmbed(Track track) {
+        var trackInfo = track.getInfo();
+        long lengthInMillis = trackInfo.getLength();
+        long minutes = (lengthInMillis / 1000) / 60;
+        long seconds = (lengthInMillis / 1000) % 60;
+
+        return new EmbedBuilder()
+                .setAuthor("MENU ĐIỀU KHIỂN", null, trackInfo.getArtworkUrl())
+                .setDescription("""
+                        :notes: **[%s](%s)**
+                                               \s
+                        :musical_keyboard: **Tác giả :** `%s`
+                        :hourglass: **Thời lượng :** `%d:%02d`"""
+                        .formatted(
+                                trackInfo.getTitle(),
+                                trackInfo.getUri(),
+                                trackInfo.getAuthor(),
+                                minutes,
+                                seconds))
+                .setFooter("💖 Âm nhạc đi trước tình yêu theo sau", guildMusicManager.metadata.getJDA().getSelfUser().getAvatarUrl())
+                .setThumbnail(trackInfo.getArtworkUrl())
+                .setColor(Color.pink).build();
+    }
+
 }

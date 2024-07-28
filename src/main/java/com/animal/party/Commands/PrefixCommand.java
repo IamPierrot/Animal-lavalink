@@ -1,5 +1,6 @@
 package com.animal.party.Commands;
 
+import com.animal.party.App;
 import com.animal.party.Commands.Info.Ping;
 import com.animal.party.Commands.Music.*;
 
@@ -9,15 +10,15 @@ import com.animal.party.Main;
 import dev.arbjerg.lavalink.client.LavalinkClient;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public abstract class PrefixCommand {
-    private static final Logger logger = LoggerFactory.getLogger(PrefixCommand.class);
+    private static final Logger logger = App.getLogger(PrefixCommand.class);
     public static Map<String, PrefixCommand> prefixCommandMap = new HashMap<>();
 
     public final String name;
@@ -44,6 +45,7 @@ public abstract class PrefixCommand {
                 Stop.class,
                 Pause.class,
                 MusicQueue.class,
+                Loop.class,
                 Ping.class
                 // Add other command classes here, e.g., Pause.class, Stop.class, etc.
         };
@@ -70,15 +72,15 @@ public abstract class PrefixCommand {
             event.getJDA().getDirectAudioController().connect(Objects.requireNonNull(memberVoiceState.getChannel()));
         }
 
-        this.getOrCreateMusicManager(member.getGuild().getIdLong());
+        this.getOrCreateMusicManager(member.getGuild().getIdLong(), event.getChannel());
     }
 
-    protected GuildMusicManager getOrCreateMusicManager(long guildId) {
+    protected GuildMusicManager getOrCreateMusicManager(long guildId, MessageChannelUnion metadata) {
         synchronized (JDAListener.class) {
             var guildMusicManager = JDAListener.musicManagers.get(guildId);
 
             if (Objects.isNull(guildMusicManager)) {
-                guildMusicManager = new GuildMusicManager(guildId, Main.client);
+                guildMusicManager = new GuildMusicManager(guildId, metadata);
                 JDAListener.musicManagers.put(guildId, guildMusicManager);
             }
 
@@ -89,7 +91,7 @@ public abstract class PrefixCommand {
     public static void handlePrefixCommand(LavalinkClient client, @NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
 
-        final String prefix = "ish";
+        final String prefix = Main.config.getApp().prefix;
         if (!event.getMessage().getContentRaw().startsWith(prefix)) return;
 
         var args = event.getMessage().getContentRaw().substring(prefix.length()).trim().split(" ");
@@ -103,6 +105,7 @@ public abstract class PrefixCommand {
                 if (Arrays.stream(value.aliases).toList().isEmpty()) break;
                 else if (Arrays.stream(value.aliases).toList().contains(command)) {
                     commandObject = value;
+                    break;
                 }
             }
             if (Objects.isNull(commandObject)) return;
@@ -110,17 +113,17 @@ public abstract class PrefixCommand {
 
         var member = event.getMember();
 
-//        if (commandObject.voiceChannel) {
-//            // Ensure the member is not null and has a valid VoiceState
-//            if (member == null) return;
-//            var memberVoiceState = member.getVoiceState();
-//            if (memberVoiceState == null || !memberVoiceState.inAudioChannel()) return;
-//
-//            // Ensure the bot's VoiceState is valid and check if the bot is in the same channel as the member
-//            var selfVoiceState = event.getGuild().getSelfMember().getVoiceState();
-//            if (selfVoiceState == null || selfVoiceState.getChannel() == null) return;
-//            if (!selfVoiceState.getChannel().equals(memberVoiceState.getChannel())) return;
-//        }
+        if (commandObject.voiceChannel) {
+            if (member == null) return;
+
+            var memberVoiceState = member.getVoiceState();
+            var selfVoiceState = event.getGuild().getSelfMember().getVoiceState();
+
+            assert memberVoiceState != null;
+            if (memberVoiceState.getChannel() == null) return;
+            assert selfVoiceState != null;
+            if (selfVoiceState.getChannel() != null && memberVoiceState.getChannel().getIdLong() != selfVoiceState.getChannel().getIdLong()) return;
+        }
 
         commandObject.callback(client, event, commandArgs);
     }

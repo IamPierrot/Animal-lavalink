@@ -1,6 +1,5 @@
 package com.animal.party.Listener;
 
-import com.animal.party.Main;
 import dev.arbjerg.lavalink.client.LavalinkClient;
 import dev.arbjerg.lavalink.client.LavalinkNode;
 import dev.arbjerg.lavalink.client.NodeOptions;
@@ -13,7 +12,7 @@ import java.util.Optional;
 public class LavaLinkListener {
     private static final Logger LOG = LoggerFactory.getLogger(LavalinkClient.class);
 
-    public static void lavaLinkRegister(LavalinkClient client) {
+    public static void lavaLinkRegisterEvents(LavalinkClient client) {
         registerLavalinkNodes(client);
         registerLavalinkListeners(client);
     }
@@ -42,7 +41,7 @@ public class LavaLinkListener {
         client.on(StatsEvent.class).subscribe((event) -> {
             final LavalinkNode node = event.getNode();
 
-            LOG.info(
+            LOG.trace(
                     "Node '{}' has stats, current players: {}/{} (link count {})",
                     node.getName(),
                     event.getPlayingPlayers(),

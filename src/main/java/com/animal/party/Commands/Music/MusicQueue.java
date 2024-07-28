@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class MusicQueue extends PrefixCommand {
@@ -30,33 +29,28 @@ public class MusicQueue extends PrefixCommand {
     @Override
     public void callback(LavalinkClient client, MessageReceivedEvent event, List<String> args) {
         var guild = event.getGuild();
-        var guildMusicManger = getOrCreateMusicManager(guild.getIdLong());
+        var guildMusicManger = getOrCreateMusicManager(guild.getIdLong(), event.getChannel());
+
+        if (!guildMusicManger.isPlaying()) return;
 
         var queue = guildMusicManger.scheduler.queue;
 
-//        final String[] methods = {"", "🔁", "🔂"};
+        final String[] methods = {"", "🔁", "🔂"};
 
         final int songCount = queue.size();
         String nextSongs = songCount > 5 ? "Và **%d** bài khác nữa...".formatted(songCount - 5) : "Đang trong hàng chờ được phát là **%d** bài hát...".formatted(songCount);
 
         var tracks = formatTracks(queue);
-        AtomicReference<Track> currentTrack = new AtomicReference<>();
+        var currentTrack = guildMusicManger.getCurrentTrack();
 
-        guildMusicManger.getPlayer().ifPresentOrElse(
-                (player) -> {
-                    if (player.getTrack() != null) {
-                        currentTrack.set(player.getTrack());
-                    }
-                },
-                () -> {}
-        );
         var embed = new EmbedBuilder()
                 .setColor(Color.ORANGE)
                 .setAuthor("Danh sách hàng chờ - %s".formatted(guild.getName()), null, event.getJDA().getSelfUser().getAvatarUrl())
                 .setThumbnail(guild.getIconUrl())
-                .setDescription("Đang phát **[%s](%s)**\n\n%s\n\n%s".formatted(
-                        currentTrack.get().getInfo().getTitle(),
-                        currentTrack.get().getInfo().getUri(),
+                .setDescription("Đang phát **[%s](%s)** %s \n\n%s\n\n%s".formatted(
+                        currentTrack.getInfo().getTitle(),
+                        currentTrack.getInfo().getUri(),
+                        methods[guildMusicManger.scheduler.getLoopMode()],
                         String.join("\n", tracks.subList(0, songCount)),
                         nextSongs
                 ))

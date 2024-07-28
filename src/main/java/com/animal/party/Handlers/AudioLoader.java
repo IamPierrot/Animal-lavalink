@@ -1,6 +1,5 @@
 package com.animal.party.Handlers;
 
-import com.animal.party.UserData;
 import dev.arbjerg.lavalink.client.AbstractAudioLoadResultHandler;
 import dev.arbjerg.lavalink.client.player.*;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -24,15 +23,9 @@ public class AudioLoader extends AbstractAudioLoadResultHandler {
     public void ontrackLoaded(@NotNull TrackLoaded result) {
         final Track track = result.getTrack();
 
-        var userData = new UserData(event.getAuthor().getIdLong());
-
-        track.setUserData(userData);
+        event.getGuildChannel().sendMessageEmbeds(trackEmbed(track)).queue();
 
         this.guildMusicManager.scheduler.enqueue(track);
-
-        final var trackTitle = track.getInfo().getTitle();
-
-        event.getGuildChannel().sendMessage("Added to queue: " + trackTitle + "\nRequested by: <@" + userData.requester() + '>').queue();
     }
 
     @Override
@@ -76,14 +69,15 @@ public class AudioLoader extends AbstractAudioLoadResultHandler {
 
         return new EmbedBuilder()
                 .setAuthor("THÊM VÀO HÀNG CHỜ", null, trackInfo.getArtworkUrl())
-                .setDescription(":notes: **[%s](%s)**\n\nNguồn: **%s**\nThời lượng: `%o`"
+                .setDescription("Đã thêm [%s](%s) vào hàng chờ!"
                         .formatted(
                         trackInfo.getTitle(),
-                        trackInfo.getUri(),
-                        trackInfo.getSourceName(),
-                        trackInfo.getLength() / 1000 / 60))
+                        trackInfo.getUri()))
                 .setFooter("💖 Âm nhạc đi trước tình yêu theo sau", event.getJDA().getSelfUser().getAvatarUrl())
                 .setThumbnail(trackInfo.getArtworkUrl())
                 .setColor(Color.pink).build();
+    }
+
+    public void deleteGuildMusic() {
     }
 }

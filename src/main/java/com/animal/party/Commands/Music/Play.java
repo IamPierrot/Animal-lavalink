@@ -28,15 +28,19 @@ public class Play extends PrefixCommand {
     public void callback(LavalinkClient client, MessageReceivedEvent event, List<String> args) {
         var guild = event.getGuild();
 
+
         if (!Objects.requireNonNull(guild.getSelfMember().getVoiceState()).inAudioChannel()) {
             joinHelper(event);
         }
 
         final String identifier = String.join(" ", args);
+
+        String query = identifier.startsWith("https") ? identifier : "ytsearch:" + identifier;
+
         final long guildId = guild.getIdLong();
         final Link link = client.getOrCreateLink(guildId);
-        final var guildMusicManager = this.getOrCreateMusicManager(guildId);
+        final var guildMusicManager = this.getOrCreateMusicManager(guildId, event.getChannel());
 
-        link.loadItem("ytmsearch:" + identifier).subscribe(new AudioLoader(event, guildMusicManager));
+        link.loadItem(query).subscribe(new AudioLoader(event, guildMusicManager));
     }
 }

@@ -1,62 +1,51 @@
 package com.animal.party;
 
-import com.animal.party.Listener.JDAListener;
-import dev.arbjerg.lavalink.client.Helpers;
-import dev.arbjerg.lavalink.client.LavalinkClient;
-import dev.arbjerg.lavalink.client.event.*;
-import dev.arbjerg.lavalink.client.loadbalancing.builtin.VoiceRegionPenaltyProvider;
-import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import java.util.Objects;
-
-import static com.animal.party.Listener.LavaLinkListener.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public class Main {
-    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
-    private static final int SESSION_INVALID = 4006;
-    public static LavalinkClient client;
-//    private static JDAListener listener;
+    public static Configuration config;
 
     public static void main(String[] args) throws InterruptedException {
-        final var token = "Tokenhere";
-        client = new LavalinkClient(Helpers.getUserIdFromToken(token));
+        String configPath = "";
+        if (isRunningFromJar()) {
+            configPath = "config.yml";
+        } else {
+            configPath = "src/main/resources/config.yml";
+        }
 
-        client.getLoadBalancer().addPenaltyProvider(new VoiceRegionPenaltyProvider());
+        File file = new File(configPath);
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        try {
+            config = objectMapper.readValue(file, Configuration.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        App.AppInitialize();
+    }
 
-        lavaLinkRegister(client);
+    public static class Configuration {
+        public Configuration() {}
 
-        final var jda = JDABuilder.createDefault(token)
-                .setVoiceDispatchInterceptor(new JDAVoiceUpdateListener(client))
-                .enableIntents(GatewayIntent.GUILD_VOICE_STATES)
-                .enableIntents(GatewayIntent.MESSAGE_CONTENT)
-                .enableCache(CacheFlag.VOICE_STATE)
-                .addEventListeners(new JDAListener(client))
-                .build()
-                .awaitReady();
+        private AppConfig app;
 
-        client.on(WebSocketClosedEvent.class).subscribe((event) -> {
-            if (event.getCode() == SESSION_INVALID) {
-                final var guildId = event.getGuildId();
-                final var guild = jda.getGuildById(guildId);
+        public AppConfig getApp() {
+            return app;
+        }
 
-                if (guild == null) {
-                    return;
-                }
+        public static class AppConfig {
+            public String prefix;
+            public String token;
+            public boolean global;
+        }
 
-                final var connectedChannel = Objects.requireNonNull(guild.getSelfMember().getVoiceState()).getChannel();
-
-                // somehow
-                if (connectedChannel == null) {
-                    return;
-                }
-
-                jda.getDirectAudioController().reconnect(connectedChannel);
-            }
-        });
+    }
+    private static boolean isRunningFromJar() {
+        URL resource = Main.class.getResource(Main.class.getSimpleName() + ".class");
+        return resource != null && resource.getProtocol().equals("jar");
     }
 }

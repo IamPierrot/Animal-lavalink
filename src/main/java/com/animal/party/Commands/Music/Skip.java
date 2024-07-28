@@ -23,7 +23,7 @@ public class Skip extends PrefixCommand  {
 
     @Override
     public void callback(LavalinkClient client, MessageReceivedEvent event, List<String> args) {
-        this.getOrCreateMusicManager(event.getGuild().getIdLong()).skip();
+        this.getOrCreateMusicManager(event.getGuild().getIdLong(), event.getChannel()).skip();
         event.getMessage().reply("Bỏ qua bài phát hiện tại!").queue();
     }
 }

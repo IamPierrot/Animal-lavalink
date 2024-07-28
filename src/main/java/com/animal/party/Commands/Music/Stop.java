@@ -23,7 +23,8 @@ public class Stop extends PrefixCommand {
 
     @Override
     public void callback(LavalinkClient client, MessageReceivedEvent event, List<String> args) {
+        this.getOrCreateMusicManager(event.getGuild().getIdLong(), event.getChannel()).stop();
+        event.getJDA().getDirectAudioController().disconnect(event.getGuild());
         event.getMessage().reply("Stopped the current track and clearing the queue").queue();
-        this.getOrCreateMusicManager(event.getGuild().getIdLong()).stop();
     }
 }
