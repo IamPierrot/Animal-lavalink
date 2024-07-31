@@ -23,7 +23,7 @@ public class MusicQueue extends PrefixCommand {
 
     @Override
     protected void initialize() {
-        voiceChannel = true;
+        voiceChannel = false;
     }
 
     @Override
@@ -60,9 +60,9 @@ public class MusicQueue extends PrefixCommand {
     }
 
     private List<String> formatTracks(Queue<Track> queue) {
-        int[] index = {1}; // to keep track of the index
+        int[] index = {1};
         return queue.stream()
-                .map(track -> String.format("**%d** - %s", index[0] + 2, formatTrack(track)))
+                .map(track -> String.format("**%d** - %s", index[0]++, formatTrack(track)))
                 .collect(Collectors.toList());
     }
 

@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-public class Main {
+public class Main extends Utils {
     public static Configuration config;
 
     public static void main(String[] args) throws InterruptedException {

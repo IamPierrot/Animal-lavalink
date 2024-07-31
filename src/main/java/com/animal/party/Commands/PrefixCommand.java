@@ -7,6 +7,7 @@ import com.animal.party.Commands.Music.*;
 import com.animal.party.Handlers.GuildMusicManager;
 import com.animal.party.Listener.JDAListener;
 import com.animal.party.Main;
+import com.animal.party.Utils;
 import dev.arbjerg.lavalink.client.LavalinkClient;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -17,7 +18,7 @@ import org.slf4j.Logger;
 
 import java.util.*;
 
-public abstract class PrefixCommand {
+public abstract class PrefixCommand extends Utils {
     private static final Logger logger = App.getLogger(PrefixCommand.class);
     public static Map<String, PrefixCommand> prefixCommandMap = new HashMap<>();
 
@@ -46,6 +47,7 @@ public abstract class PrefixCommand {
                 Pause.class,
                 MusicQueue.class,
                 Loop.class,
+                History.class,
                 Ping.class
                 // Add other command classes here, e.g., Pause.class, Stop.class, etc.
         };
@@ -75,18 +77,6 @@ public abstract class PrefixCommand {
         this.getOrCreateMusicManager(member.getGuild().getIdLong(), event.getChannel());
     }
 
-    protected GuildMusicManager getOrCreateMusicManager(long guildId, MessageChannelUnion metadata) {
-        synchronized (JDAListener.class) {
-            var guildMusicManager = JDAListener.musicManagers.get(guildId);
-
-            if (Objects.isNull(guildMusicManager)) {
-                guildMusicManager = new GuildMusicManager(guildId, metadata);
-                JDAListener.musicManagers.put(guildId, guildMusicManager);
-            }
-
-            return guildMusicManager;
-        }
-    }
 
     public static void handlePrefixCommand(LavalinkClient client, @NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;

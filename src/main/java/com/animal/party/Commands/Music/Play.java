@@ -22,6 +22,7 @@ public class Play extends PrefixCommand {
     @Override
     protected void initialize() {
         voiceChannel = true;
+        aliases = new String[]{"p"};
     }
 
     @Override

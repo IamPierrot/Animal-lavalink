@@ -11,12 +11,10 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class App {
+public class App extends Utils {
     public static LavalinkClient client;
     public static JDA jda;
 
@@ -68,10 +66,5 @@ public class App {
         });
     }
 
-    public static Logger getLogger(String name) {
-        return LoggerFactory.getLogger(name);
-    }
-    public static Logger getLogger(Class<?> clazz) {
-        return LoggerFactory.getLogger(clazz);
-    }
+
 }

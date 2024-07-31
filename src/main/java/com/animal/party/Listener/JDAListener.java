@@ -2,12 +2,15 @@ package com.animal.party.Listener;
 
 import com.animal.party.App;
 import com.animal.party.Commands.PrefixCommand;
+import com.animal.party.Component.ButtonComponent;
 import com.animal.party.Handlers.GuildMusicManager;
+import com.animal.party.Utils;
 import dev.arbjerg.lavalink.client.LavalinkClient;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -19,7 +22,7 @@ import java.util.Map;
 
 public class JDAListener extends ListenerAdapter {
     public static final Map<Long, GuildMusicManager> musicManagers = new HashMap<>();
-    private static final Logger LOG = App.getLogger(JDAListener.class);
+    private static final Logger LOG = Utils.getLogger(JDAListener.class);
     private final LavalinkClient client = App.client;
 
     public JDAListener() {}
@@ -27,6 +30,7 @@ public class JDAListener extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         PrefixCommand.loadCommands();
+        ButtonComponent.loadButtonComponents();
         LOG.info("{} is ready!", event.getJDA().getSelfUser().getAsTag());
     }
 
@@ -36,12 +40,23 @@ public class JDAListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+        ButtonComponent.handleButtonComponent(client, event);
+    }
 
+    @Override
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
         var guild = event.getGuild();
         var voiceChannel = event.getChannelLeft();
+        var selfMember = guild.getSelfMember();
+
         if (voiceChannel != null && !event.getEntity().getUser().isBot()) {
-            checkAndDisconnectIfAlone(guild, voiceChannel);
+            boolean botWasInChannel = voiceChannel.getMembers().stream()
+                    .anyMatch(member -> member.equals(selfMember));
+
+            if (botWasInChannel) {
+                checkAndDisconnectIfAlone(guild, voiceChannel);
+            }
         }
     }
 

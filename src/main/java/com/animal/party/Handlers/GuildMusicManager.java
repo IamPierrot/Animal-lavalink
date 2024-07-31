@@ -14,7 +14,7 @@ public class GuildMusicManager {
     public final TrackScheduler scheduler = new TrackScheduler(this);
     private final long guildId;
     private final LavalinkClient lavalink = App.client;
-    public final MessageChannelUnion metadata;
+    public MessageChannelUnion metadata;
 
     public GuildMusicManager(long guildId, MessageChannelUnion metadata) {
         this.guildId = guildId;
@@ -33,6 +33,9 @@ public class GuildMusicManager {
 
     public void skip() {
         this.scheduler.skipTrack();
+    }
+    public void back() {
+        this.scheduler.backTrack();
     }
 
     public Track getCurrentTrack() {

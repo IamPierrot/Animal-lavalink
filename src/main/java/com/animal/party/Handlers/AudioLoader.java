@@ -23,7 +23,7 @@ public class AudioLoader extends AbstractAudioLoadResultHandler {
     public void ontrackLoaded(@NotNull TrackLoaded result) {
         final Track track = result.getTrack();
 
-        event.getGuildChannel().sendMessageEmbeds(trackEmbed(track)).queue();
+        event.getMessage().replyEmbeds(trackEmbed(track)).queue();
 
         this.guildMusicManager.scheduler.enqueue(track);
     }
@@ -46,7 +46,7 @@ public class AudioLoader extends AbstractAudioLoadResultHandler {
 
         final Track firstTrack = tracks.getFirst();
 
-        event.getGuildChannel().sendMessageEmbeds(trackEmbed(firstTrack)).queue();
+        event.getMessage().replyEmbeds(trackEmbed(firstTrack)).queue();
 
         this.guildMusicManager.scheduler.enqueue(firstTrack);
     }

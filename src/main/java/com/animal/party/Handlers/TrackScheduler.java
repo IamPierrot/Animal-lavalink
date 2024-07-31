@@ -1,29 +1,72 @@
 package com.animal.party.Handlers;
 
-import com.animal.party.App;
+import com.animal.party.Utils;
 import dev.arbjerg.lavalink.client.event.TrackEndEvent;
 import dev.arbjerg.lavalink.client.event.TrackStartEvent;
 import dev.arbjerg.lavalink.client.player.Track;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.slf4j.Logger;
 
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Queue;
 
-public class TrackScheduler {
+public class TrackScheduler extends Utils {
     public final Queue<Track> queue = new LinkedList<>();
-    private final Logger logger = App.getLogger(TrackScheduler.class);
+    public final Deque<Track> history = new ArrayDeque<>();
+    private final Logger logger = getLogger(TrackScheduler.class);
     private final GuildMusicManager guildMusicManager;
     private LoopMode loopMode = LoopMode.NONE;
-    private Track lastTrack;
+    private Track currentTrack;
+    private boolean goingBack = false;
 
     public TrackScheduler(GuildMusicManager guildMusicManager) {
         this.guildMusicManager = guildMusicManager;
     }
 
+    ////////////////// EVENTS
+
+    public void onTrackStart(TrackStartEvent event) {
+        var track = event.getTrack();
+        currentTrack = track;
+
+        logger.info("Track started: {}", track.getInfo());
+
+        var row = ActionRow.of(
+                Button.primary("back", Emoji.fromCustom("firsttrack", 1267689860483907624L, false)),
+                Button.primary("loop", Emoji.fromCustom("loop", 1267690139770159197L, false)),
+                Button.primary("stop", Emoji.fromCustom("stop", 1267689997050318888L, false)),
+                Button.primary("pause", Emoji.fromCustom("pause", 1267689876791230567L, false)),
+                Button.primary("skip", Emoji.fromCustom("next", 1267689838480588800L, false))
+        ).getComponents();
+
+        guildMusicManager.metadata.sendMessageEmbeds(trackEmbed(track)).addActionRow(row).queue();
+    }
+
+    public void onTrackEnd(TrackEndEvent event) {
+        var endReason = event.getEndReason();
+        if (!goingBack && currentTrack != null) {
+            history.push(currentTrack);
+        } else  {
+            history.push(event.getTrack().makeClone());
+        }
+
+        if (endReason.getMayStartNext()) {
+            if (loopMode == LoopMode.TRACK) {
+                startTrack(event.getTrack().makeClone());
+            } else {
+                nextTrack();
+            }
+        }
+    }
+    ////////////////////////////////////////
+
+
+    ///////////////////////// Queue navigation
     public void enqueue(Track track) {
         this.guildMusicManager.getPlayer().ifPresentOrElse(
                 (player) -> {
@@ -53,43 +96,31 @@ public class TrackScheduler {
                 }
         );
     }
+    //////////////////////////////////////////////
 
-    public void skipTrack() {
+
+    //////////////////////////////// UTILS
+    public synchronized void skipTrack() {
+        goingBack = false;
         nextTrack();
     }
 
-    ////////////////// EVENTS
-
-    public void onTrackStart(TrackStartEvent event) {
-        var track = event.getTrack();
-        lastTrack = track;
-        logger.info("Track started: {}", track.getInfo());
-        guildMusicManager.metadata.sendMessageEmbeds(trackEmbed(track)).queue();
-    }
-
-    public void onTrackEnd(TrackEndEvent event) {
-        var endReason = event.getEndReason();
-
-        lastTrack = event.getTrack();
-        if (endReason.getMayStartNext()) {
-            if (loopMode == LoopMode.TRACK) {
-                startTrack(event.getTrack().makeClone());
-            } else {
-                nextTrack();
-            }
+    public synchronized void backTrack() {
+        if (!history.isEmpty()) {
+            goingBack = true;
+            Track previousTrack = history.pop();
+            queue.offer(currentTrack);
+            startTrack(previousTrack);
+        } else {
+            guildMusicManager.metadata.sendMessageEmbeds(
+                    new EmbedBuilder()
+                            .setAuthor("Không còn bài hát nào trong lịch sử!")
+                            .build()
+            ).queue();
         }
     }
-    ////////////////////////////////////////
 
-    public synchronized int getLoopMode() {
-        return loopMode.ordinal();
-    }
-
-    public synchronized void setLoopMode(LoopMode loopMode) {
-        this.loopMode = loopMode;
-    }
-
-    private void startTrack(Track track) {
+    private synchronized void startTrack(Track track) {
         this.guildMusicManager.getLink().ifPresent(
                 (link) -> link.createOrUpdatePlayer()
                         .setTrack(track)
@@ -97,17 +128,19 @@ public class TrackScheduler {
                         .subscribe()
         );
     }
+    ///////////////////////////////////////////
 
+
+    /////////////////////////// Track handle
     private void nextTrack() {
         final var nextTrack = queue.poll();
 
         if (nextTrack != null) {
             startTrack(nextTrack);
-        } else if (loopMode == LoopMode.TRACK && lastTrack != null) {
-            startTrack(lastTrack.makeClone());
+        } else if (loopMode == LoopMode.TRACK && currentTrack != null) {
+            startTrack(currentTrack.makeClone());
         } else if (loopMode == LoopMode.QUEUE && !queue.isEmpty()) {
-            var firstTrack = queue.poll();
-            queue.offer(firstTrack);
+            var firstTrack = history.peek();
             startTrack(firstTrack.makeClone());
         } else {
             startTrack(null);
@@ -118,7 +151,20 @@ public class TrackScheduler {
             ).queue();
         }
     }
+    ////////////////////////////////////////////
 
+    ////////////////////////////////////// LOOP MODE
+    public synchronized int getLoopMode() {
+        return loopMode.ordinal();
+    }
+
+    public synchronized void setLoopMode(LoopMode loopMode) {
+        this.loopMode = loopMode;
+    }
+    ///////////////////////////////////////
+
+
+    /////////////////////////////////////// HELPERS
     private MessageEmbed trackEmbed(Track track) {
         var trackInfo = track.getInfo();
         long lengthInMillis = trackInfo.getLength();
@@ -142,5 +188,6 @@ public class TrackScheduler {
                 .setThumbnail(trackInfo.getArtworkUrl())
                 .setColor(Color.pink).build();
     }
+    ////////////////////////////////////////////////////
 
 }
