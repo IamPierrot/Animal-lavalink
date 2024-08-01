@@ -13,7 +13,7 @@ public class Pause extends PrefixCommand {
     }
 
     private Pause() {
-        super("pause", "tạm dừng hoặc tiếp tục hàng phát");
+        super("pause", "tạm dừng hoặc tiếp tục hàng phát", "Music");
     }
 
     @Override

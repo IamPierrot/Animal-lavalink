@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import java.util.Optional;
 
 public class LavaLinkListener extends Utils {
-    private static final Logger LOG = getLogger(LavaLinkListener.class);
+    private static final Logger LOG = getLogger("LavaLink");
 
     public static void lavaLinkRegisterEvents(LavalinkClient client) {
         registerLavalinkNodes(client);

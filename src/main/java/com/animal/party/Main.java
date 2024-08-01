@@ -11,12 +11,7 @@ public class Main extends Utils {
     public static Configuration config;
 
     public static void main(String[] args) throws InterruptedException {
-        String configPath;
-        if (isRunningFromJar()) {
-            configPath = "config.yml";
-        } else {
-            configPath = "src/main/resources/config.yml";
-        }
+        String configPath = isRunningFromJar() ? "config.yml" : "src/main/resources/config.yml";
 
         File file = new File(configPath);
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());

@@ -17,7 +17,7 @@ public class Ping extends PrefixCommand {
     }
 
     private Ping() {
-        super("ping", "pong!");
+        super("ping", "pong!", "Info");
     }
 
     @Override

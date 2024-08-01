@@ -1,8 +1,5 @@
 package com.animal.party.Component;
 
-import com.animal.party.App;
-import com.animal.party.Commands.Info.Ping;
-import com.animal.party.Commands.Music.*;
 import com.animal.party.Component.Button.Back;
 import com.animal.party.Component.Button.Loop;
 import com.animal.party.Component.Button.Pause;
@@ -52,8 +49,11 @@ public abstract class ButtonComponent extends Utils {
     public static void handleButtonComponent(LavalinkClient client, @NotNull ButtonInteractionEvent event) {
         var customId = event.getComponentId();
         var buttonObject = buttons.get(customId);
-
         if (buttonObject == null) return;
+
+        var member = event.getMember();
+        if (member == null) return;
+        if (isNotSameVoice(member.getVoiceState(), event.getMember().getVoiceState(), event.getMessage())) return;
 
         buttonObject.callback(client, event);
     }

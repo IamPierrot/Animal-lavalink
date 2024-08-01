@@ -13,7 +13,7 @@ public class Skip extends PrefixCommand  {
     }
 
     private Skip() {
-        super("skip", "bỏ qua hàng phát hiện tại");
+        super("skip", "bỏ qua hàng phát hiện tại", "Music");
     }
 
     @Override
@@ -23,7 +23,7 @@ public class Skip extends PrefixCommand  {
 
     @Override
     public void callback(LavalinkClient client, MessageReceivedEvent event, List<String> args) {
-        this.getOrCreateMusicManager(event.getGuild().getIdLong(), event.getChannel()).skip();
+        getOrCreateMusicManager(event.getGuild().getIdLong(), event.getChannel()).skip();
         event.getMessage().reply("Bỏ qua bài phát hiện tại!").queue();
     }
 }

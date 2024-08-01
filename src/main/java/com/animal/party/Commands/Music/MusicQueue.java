@@ -18,7 +18,7 @@ public class MusicQueue extends PrefixCommand {
     }
 
     private MusicQueue() {
-        super("queue", "xem hàng chờ");
+        super("queue", "xem hàng chờ", "Music");
     }
 
     @Override

@@ -15,7 +15,7 @@ public class Loop extends PrefixCommand {
     }
 
     private Loop() {
-        super("loop", "thiết lặp chế độ lập");
+        super("loop", "thiết lặp chế độ lập", "Music");
     }
 
     @Override

@@ -16,7 +16,7 @@ public class History extends PrefixCommand {
     }
 
     History() {
-        super("history", "xem lại lịch sử đã phát");
+        super("history", "xem lại lịch sử đã phát", "Music");
     }
 
     @Override

@@ -44,7 +44,8 @@ public class TrackScheduler extends Utils {
                 Button.primary("skip", Emoji.fromCustom("next", 1267689838480588800L, false))
         ).getComponents();
 
-        guildMusicManager.metadata.sendMessageEmbeds(trackEmbed(track)).addActionRow(row).queue();
+        var msg = guildMusicManager.metadata.sendMessageEmbeds(trackEmbed(track)).addActionRow(row).complete();
+        setTimeout(() -> msg.delete().queue(), track.getInfo().getLength());
     }
 
     public void onTrackEnd(TrackEndEvent event) {
@@ -140,8 +141,8 @@ public class TrackScheduler extends Utils {
         } else if (loopMode == LoopMode.TRACK && currentTrack != null) {
             startTrack(currentTrack.makeClone());
         } else if (loopMode == LoopMode.QUEUE && !queue.isEmpty()) {
-            var firstTrack = history.peek();
-            startTrack(firstTrack.makeClone());
+            queue.addAll(history);
+            startTrack(queue.poll());
         } else {
             startTrack(null);
             guildMusicManager.metadata.sendMessageEmbeds(
