@@ -9,15 +9,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="304aeef7-6625-4962-bae6-402f80f54f50" name="Changes" comment="big upd: update new src, handle loop track, new read config.yml, fix logic handle message.">
+    <list default="true" id="304aeef7-6625-4962-bae6-402f80f54f50" name="Changes" comment="upd: new help command and utils functions">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Canvas/CropOption.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Canvas/ImageUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Canvas/MusicCard.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Canvas/MusicCardOption.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/IshMusic_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/IshMusic_jar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/Music/MusicQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/Music/MusicQueue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/PrefixCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Commands/PrefixCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Handlers/AudioLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Handlers/AudioLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/animal/party/Handlers/TrackScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/animal/party/Handlers/TrackScheduler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +31,8 @@
       <list>
         <option value="Interface" />
         <option value="Enum" />
+        <option value="Kotlin Script" />
+        <option value="Kotlin Class" />
         <option value="Class" />
       </list>
     </option>
@@ -37,7 +41,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -58,16 +62,23 @@
     "JAR Application.Lavalink.jar.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ShowUsagesActions.previewPropertyKey": "true",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "project.structure.last.edited": "Modules",
+    "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "io.github.pandier.intellijdiscordrp.settings.DiscordSettingsConfigurable"
+    "settings.editor.selected.configurable": "promo.database"
   }
 }]]></component>
-  <component name="RunManager" selected="JAR Application.Lavalink.jar">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Working Station\Java Workspace\IshMusic\src\main\resources" />
+      <recent name="D:\Working Station\Java Workspace\IshMusic\out\artifacts\IshMusic_jar" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.animal.party.Main" />
       <module name="IshMusic" />
@@ -161,7 +172,47 @@
       <option name="project" value="LOCAL" />
       <updated>1722169115419</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="feat: load spotify url.">
+      <option name="closed" value="true" />
+      <created>1722173136091</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1722173136091</updated>
+    </task>
+    <task id="LOCAL-00009" summary="feat: update command">
+      <option name="closed" value="true" />
+      <created>1722173661259</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1722173661259</updated>
+    </task>
+    <task id="LOCAL-00010" summary="feat: handle button interaction, history command.">
+      <option name="closed" value="true" />
+      <created>1722396055381</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1722396055381</updated>
+    </task>
+    <task id="LOCAL-00011" summary="feat: add kotlin config">
+      <option name="closed" value="true" />
+      <created>1722396066820</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1722396066820</updated>
+    </task>
+    <task id="LOCAL-00012" summary="upd: new help command and utils functions">
+      <option name="closed" value="true" />
+      <created>1722529925213</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1722529925213</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -184,6 +235,11 @@
     <MESSAGE value="upd: change lambda" />
     <MESSAGE value="rm: token bot" />
     <MESSAGE value="big upd: update new src, handle loop track, new read config.yml, fix logic handle message." />
-    <option name="LAST_COMMIT_MESSAGE" value="big upd: update new src, handle loop track, new read config.yml, fix logic handle message." />
+    <MESSAGE value="feat: load spotify url." />
+    <MESSAGE value="feat: update command" />
+    <MESSAGE value="feat: handle button interaction, history command." />
+    <MESSAGE value="feat: add kotlin config" />
+    <MESSAGE value="upd: new help command and utils functions" />
+    <option name="LAST_COMMIT_MESSAGE" value="upd: new help command and utils functions" />
   </component>
 </project>

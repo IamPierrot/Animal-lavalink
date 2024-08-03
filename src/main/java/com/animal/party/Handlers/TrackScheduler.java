@@ -1,17 +1,21 @@
 package com.animal.party.Handlers;
 
+import com.animal.party.Canvas.MusicCard;
 import com.animal.party.Utils;
 import dev.arbjerg.lavalink.client.event.TrackEndEvent;
 import dev.arbjerg.lavalink.client.event.TrackStartEvent;
 import dev.arbjerg.lavalink.client.player.Track;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import org.apache.batik.transcoder.TranscoderException;
 import org.slf4j.Logger;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -44,8 +48,16 @@ public class TrackScheduler extends Utils {
                 Button.primary("skip", Emoji.fromCustom("next", 1267689838480588800L, false))
         ).getComponents();
 
-        var msg = guildMusicManager.metadata.sendMessageEmbeds(trackEmbed(track)).addActionRow(row).complete();
-        setTimeout(() -> msg.delete().queue(), track.getInfo().getLength());
+        Message msg = null;
+        try {
+            msg = guildMusicManager.metadata.sendFiles(MusicCard.getMusicCard(track.getInfo())).addActionRow(row).complete();
+        } catch (TranscoderException | IOException e) {
+            logger.error(e.getMessage());
+        }
+        if (msg != null) {
+            Message finalMsg = msg;
+            setTimeout(() -> finalMsg.delete().queue(), track.getInfo().getLength());
+        }
     }
 
     public void onTrackEnd(TrackEndEvent event) {
@@ -189,6 +201,7 @@ public class TrackScheduler extends Utils {
                 .setThumbnail(trackInfo.getArtworkUrl())
                 .setColor(Color.pink).build();
     }
+
     ////////////////////////////////////////////////////
 
 }
