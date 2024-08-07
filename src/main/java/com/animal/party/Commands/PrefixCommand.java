@@ -1,9 +1,6 @@
 package com.animal.party.Commands;
 
 import com.animal.party.App;
-import com.animal.party.Commands.Info.Help;
-import com.animal.party.Commands.Info.Ping;
-import com.animal.party.Commands.Music.*;
 import com.animal.party.Main;
 import com.animal.party.Utils;
 import dev.arbjerg.lavalink.client.LavalinkClient;
@@ -11,11 +8,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public abstract class PrefixCommand extends Utils {
     public static final Map<String, PrefixCommand> prefixCommandMap = new HashMap<>();
@@ -42,22 +40,12 @@ public abstract class PrefixCommand extends Utils {
     }
 
     public static void loadCommands() {
-        // Reference all command classes to ensure their static blocks are executed
-        Class<?>[] commands = {
-                Help.class,
-                Play.class,
-                Skip.class,
-                Stop.class,
-                Pause.class,
-                MusicQueue.class,
-                Loop.class,
-                History.class,
-                Ping.class
-                // Add other command classes here, e.g., Pause.class, Stop.class, etc.
-        };
-        for (Class<?> command : commands) {
+        Reflections reflections = new Reflections("com.animal.party.Commands");
+        Set<Class<? extends PrefixCommand>> commandClasses = reflections.getSubTypesOf(PrefixCommand.class);
+
+        for (Class<? extends PrefixCommand> commandClass : commandClasses) {
             try {
-                Class.forName(command.getName());
+                Class.forName(commandClass.getName());
             } catch (ClassNotFoundException e) {
                 logger.error(e.getMessage());
             }
@@ -70,25 +58,16 @@ public abstract class PrefixCommand extends Utils {
         String prefix = Main.config.getApp().prefix.toLowerCase();
         final var content = event.getMessage().getContentRaw();
 
-        final var mention = event.getMessage().getMentions().getMentions().getFirst();
 
         boolean isSelfMention = false;
-        if (mention != null && mention.getId().equals(event.getJDA().getSelfUser().getId())) {
-            prefix = mention.getAsMention();
-            isSelfMention = true;
+        if (!event.getMessage().getMentions().getMentions().isEmpty()) {
+            final var mention = event.getMessage().getMentions().getMentions().getFirst();
+            if (mention.getId().equals(event.getJDA().getSelfUser().getId())) {
+                prefix = mention.getAsMention();
+                isSelfMention = true;
+            }
         }
-
         if (!content.toLowerCase().startsWith(prefix)) return;
-        else if (isSelfMention) {
-            event.getMessage()
-                    .replyEmbeds(new EmbedBuilder()
-                            .setDescription("Ckao`! Đây là bot âm nhạc và prefix của tôi là %s hoặc bạn có thể ping %s để dùng lệnh\n(help để biết thêm thông tin)".formatted(Main.config.getApp().prefix, event.getJDA().getSelfUser().getAsMention()))
-                            .setColor(Color.pink)
-                            .setFooter("Âm nhạc đi trước tình yêu theo sau 💞", event.getJDA().getSelfUser().getAvatarUrl())
-                            .build()
-                    ).queue();
-            return;
-        }
 
         String[] args = content.substring(prefix.length()).trim().split("\\s+");
 
@@ -97,7 +76,20 @@ public abstract class PrefixCommand extends Utils {
 
         final var commandObject = getCommand(command);
 
-        if (Objects.isNull(commandObject)) return;
+        if (Objects.isNull(commandObject)) {
+            if (isSelfMention) {
+                event.getMessage()
+                        .replyEmbeds(new EmbedBuilder()
+                                .setDescription("Ckao`! Đây là bot âm nhạc và prefix của tôi là %s hoặc bạn có thể ping %s để dùng lệnh\n(help để biết thêm thông tin)".formatted(Main.config.getApp().prefix, event.getJDA().getSelfUser().getAsMention()))
+                                .setColor(Color.pink)
+                                .setFooter("Âm nhạc đi trước tình yêu theo sau 💞", event.getJDA().getSelfUser().getAvatarUrl())
+                                .build()
+                        ).queue();
+                return;
+            }
+            return;
+        }
+
 
         var member = event.getMember();
 
@@ -112,6 +104,7 @@ public abstract class PrefixCommand extends Utils {
 
 
     protected static @Nullable PrefixCommand getCommand(String commandName) {
+        if (commandName.isEmpty()) return null;
         return Optional.ofNullable(prefixCommandMap.get(commandName))
                 .orElseGet(() -> prefixCommandMap.values().stream()
                         .filter(value -> Arrays.asList(value.aliases).contains(commandName))

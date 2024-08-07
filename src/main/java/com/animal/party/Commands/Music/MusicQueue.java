@@ -29,7 +29,7 @@ public class MusicQueue extends PrefixCommand {
     @Override
     public void callback(LavalinkClient client, MessageReceivedEvent event, List<String> args) {
         var guild = event.getGuild();
-        var guildMusicManger = getOrCreateMusicManager(guild.getIdLong(), event.getChannel());
+        var guildMusicManger = getOrCreateMusicManager(guild.getIdLong());
 
         if (!guildMusicManger.isPlaying()) return;
 

@@ -140,18 +140,15 @@ public class TrackScheduler extends Utils {
 
     /////////////////////////// Track handle
     private void nextTrack() {
-        final var nextTrack = queue.poll();
-
-        if (nextTrack != null) {
-            startTrack(nextTrack);
-        } else if (loopMode == LoopMode.TRACK && currentTrack != null) {
+        if (loopMode == LoopMode.TRACK && currentTrack != null) {
             startTrack(currentTrack.makeClone());
         } else if (loopMode == LoopMode.QUEUE && !queue.isEmpty()) {
             queue.addAll(history);
             startTrack(queue.poll());
         } else {
-            startTrack(null);
-            guildMusicManager.metadata.sendMessageEmbeds(
+            final var nextTrack = queue.poll();
+            startTrack(nextTrack);
+            if (nextTrack == null) guildMusicManager.metadata.sendMessageEmbeds(
                     new EmbedBuilder()
                             .setAuthor("Không còn bài hát nào trong danh sách!")
                             .setColor(Color.RED)

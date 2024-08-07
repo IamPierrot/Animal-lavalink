@@ -39,6 +39,10 @@ public class Utils {
             return guildMusicManager;
 
         }
+    }   public static @Nullable GuildMusicManager getOrCreateMusicManager(long guildId) {
+        synchronized (JDAListener.class) {
+            return JDAListener.musicManagers.getOrDefault(guildId, null);
+        }
     }
 
     public static void setTimeout(Runnable runnable, long delay) {

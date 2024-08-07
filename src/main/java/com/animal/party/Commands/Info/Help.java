@@ -45,11 +45,18 @@ public class Help extends PrefixCommand {
             });
 
             // Adding fields to the embed for each category of commands
+            // Adding fields to the embed for each category of commands
             descriptionMaps.forEach((category, commands) -> {
                 StringBuilder commandsList = new StringBuilder();
-                commands.forEach(commandName -> commandsList.append("`").append(commandName).append("`").append(" "));
+                for (int i = 0; i < commands.size(); i++) {
+                    commandsList.append("`").append(commands.get(i)).append("` ");
+                    if ((i + 1) % 7 == 0) {
+                        commandsList.append("\n");
+                    }
+                }
                 helpEmbed.addField(category.toUpperCase(), commandsList.toString(), false);
             });
+
 
             event.getMessage().replyEmbeds(helpEmbed.build()).queue();
         } else {
