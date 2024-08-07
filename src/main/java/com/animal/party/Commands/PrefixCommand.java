@@ -1,6 +1,5 @@
 package com.animal.party.Commands;
 
-import com.animal.party.App;
 import com.animal.party.Main;
 import com.animal.party.Utils;
 import dev.arbjerg.lavalink.client.LavalinkClient;
@@ -17,7 +16,7 @@ import java.util.*;
 
 public abstract class PrefixCommand extends Utils {
     public static final Map<String, PrefixCommand> prefixCommandMap = new HashMap<>();
-    private static final Logger logger = App.getLogger(PrefixCommand.class);
+    private static final Logger logger = getLogger(PrefixCommand.class);
     public final String name;
     public final String description;
     public final String category;
@@ -35,7 +34,6 @@ public abstract class PrefixCommand extends Utils {
 
     protected static void registerCommand(PrefixCommand command) {
         prefixCommandMap.put(command.name, command);
-        logger.info("Loaded {}!", command.name);
         command.initialize();
     }
 

@@ -20,8 +20,13 @@ public class Skip extends ButtonComponent {
 
     @Override
     public void callback(LavalinkClient client, @NotNull ButtonInteractionEvent event) {
-        getOrCreateMusicManager(Objects.requireNonNull(event.getGuild()).getIdLong(), event.getChannel()).skip();
-        event.getMessage().reply("Bỏ qua bài phát hiện tại!").queue();
-        event.getMessage().delete().queue();
+        try {
+            Objects.requireNonNull(getOrCreateMusicManager(Objects.requireNonNull(event.getGuild()).getIdLong())).skip();
+            event.getInteraction().reply("Bỏ qua bài phát hiện tại!").queue();
+            event.getMessage().delete().queue();
+
+        } catch (Exception e) {
+            event.getInteraction().reply("❌ | Có lỗi khi bỏ qua bài hát!").queue();
+        }
     }
 }

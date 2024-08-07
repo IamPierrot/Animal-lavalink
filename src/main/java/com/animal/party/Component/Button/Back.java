@@ -20,7 +20,11 @@ public class Back extends ButtonComponent {
 
     @Override
     public void callback(LavalinkClient client, @NotNull ButtonInteractionEvent event) {
-        getOrCreateMusicManager(Objects.requireNonNull(event.getGuild()).getIdLong(), event.getChannel()).back();
-        event.getMessage().reply("Bỏ qua bài phát hiện tại!").queue();
+        try {
+            Objects.requireNonNull(getOrCreateMusicManager(Objects.requireNonNull(event.getGuild()).getIdLong())).back();
+            event.getInteraction().reply("Trở về track phía trước!").queue();
+        } catch (NullPointerException e) {
+            event.getInteraction().reply("❌ | có lỗi khi trở về quá khứ!").queue();
+        }
     }
 }

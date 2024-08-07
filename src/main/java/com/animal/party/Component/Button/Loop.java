@@ -27,7 +27,7 @@ public class Loop extends ButtonComponent {
         var loopMode = guildMusicManger.scheduler.getLoopMode();
 
         if (guildMusicManger.getPlayer().isEmpty()) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
+            event.getInteraction().replyEmbeds(new EmbedBuilder()
                     .setAuthor("Không có gì đang phát ấy ? thử lại ikkk.... ❌")
                     .build()).queue();
         } else {
@@ -51,7 +51,7 @@ public class Loop extends ButtonComponent {
             var loopEmbed = new EmbedBuilder()
                     .setDescription("Thiết lập chế độ : **%s** ✅".formatted(methods[loopMode]));
 
-            event.getMessage().replyEmbeds(loopEmbed.build()).queue();
+            event.getInteraction().replyEmbeds(loopEmbed.build()).queue();
         }
     }
 }

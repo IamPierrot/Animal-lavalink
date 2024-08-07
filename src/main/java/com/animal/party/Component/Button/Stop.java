@@ -19,8 +19,13 @@ public class Stop extends ButtonComponent {
 
     @Override
     public void callback(LavalinkClient client, @NotNull ButtonInteractionEvent event) {
-        getOrCreateMusicManager(Objects.requireNonNull(event.getGuild()).getIdLong(), event.getChannel()).stop();
-        event.getJDA().getDirectAudioController().disconnect(event.getGuild());
-        event.getMessage().reply("Đã dọn sách hàng chờ và xin chào tạm biệt <3").queue();
+        try {
+            Objects.requireNonNull(getOrCreateMusicManager(Objects.requireNonNull(event.getGuild()).getIdLong())).stop();
+            event.getJDA().getDirectAudioController().disconnect(event.getGuild());
+            event.getInteraction().reply("Đã dọn sách hàng chờ và xin chào tạm biệt <3").queue();
+
+        } catch (Exception e) {
+            event.getInteraction().reply("❌ | Có lỗi khi stop").queue();
+        }
     }
 }

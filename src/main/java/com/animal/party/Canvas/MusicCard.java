@@ -85,7 +85,6 @@ public class MusicCard {
                         .setImagePath(option.getBackgroundImage())
                         .setX(0)
                         .setY(0)
-                        .setBorderRadius(270)
                         .setWidth(2367)
                         .setHeight(520)
                         .setCropCenter(true)
