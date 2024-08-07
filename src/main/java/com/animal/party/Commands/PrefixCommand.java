@@ -4,21 +4,22 @@ import com.animal.party.App;
 import com.animal.party.Commands.Info.Help;
 import com.animal.party.Commands.Info.Ping;
 import com.animal.party.Commands.Music.*;
-
 import com.animal.party.Main;
 import com.animal.party.Utils;
 import dev.arbjerg.lavalink.client.LavalinkClient;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public abstract class PrefixCommand extends Utils {
-    private static final Logger logger = App.getLogger(PrefixCommand.class);
     public static final Map<String, PrefixCommand> prefixCommandMap = new HashMap<>();
-
+    private static final Logger logger = App.getLogger(PrefixCommand.class);
     public final String name;
     public final String description;
     public final String category;
@@ -63,17 +64,33 @@ public abstract class PrefixCommand extends Utils {
         }
     }
 
-    protected abstract void initialize();
-
-    public abstract void callback(LavalinkClient client, MessageReceivedEvent event, List<String> args);
-
     public static void handlePrefixCommand(LavalinkClient client, @NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
 
-        final String PREFIX = Main.config.getApp().prefix.toLowerCase();
-        if (!event.getMessage().getContentRaw().toLowerCase().startsWith(PREFIX)) return;
+        String prefix = Main.config.getApp().prefix.toLowerCase();
+        final var content = event.getMessage().getContentRaw();
 
-        var args = event.getMessage().getContentRaw().substring(PREFIX.length()).trim().split(" ");
+        final var mention = event.getMessage().getMentions().getMentions().getFirst();
+
+        boolean isSelfMention = false;
+        if (mention != null && mention.getId().equals(event.getJDA().getSelfUser().getId())) {
+            prefix = mention.getAsMention();
+            isSelfMention = true;
+        }
+
+        if (!content.toLowerCase().startsWith(prefix)) return;
+        else if (isSelfMention) {
+            event.getMessage()
+                    .replyEmbeds(new EmbedBuilder()
+                            .setDescription("Ckao`! Đây là bot âm nhạc và prefix của tôi là %s hoặc bạn có thể ping %s để dùng lệnh\n(help để biết thêm thông tin)".formatted(Main.config.getApp().prefix, event.getJDA().getSelfUser().getAsMention()))
+                            .setColor(Color.pink)
+                            .setFooter("Âm nhạc đi trước tình yêu theo sau 💞", event.getJDA().getSelfUser().getAvatarUrl())
+                            .build()
+                    ).queue();
+            return;
+        }
+
+        String[] args = content.substring(prefix.length()).trim().split("\\s+");
 
         String command = args[0].toLowerCase();
         List<String> commandArgs = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
@@ -86,7 +103,8 @@ public abstract class PrefixCommand extends Utils {
 
         if (commandObject.voiceChannel) {
             if (member == null) return;
-            if (isNotSameVoice(member.getVoiceState(), event.getMember().getVoiceState(), event.getMessage())) return;
+            if (isNotSameVoice(member.getVoiceState(), Objects.requireNonNull(event.getGuild()).getSelfMember().getVoiceState(), event.getMessage()))
+                return;
         }
 
         commandObject.callback(client, event, commandArgs);
@@ -100,5 +118,9 @@ public abstract class PrefixCommand extends Utils {
                         .findFirst()
                         .orElse(null));
     }
+
+    protected abstract void initialize();
+
+    public abstract void callback(LavalinkClient client, MessageReceivedEvent event, List<String> args);
 
 }

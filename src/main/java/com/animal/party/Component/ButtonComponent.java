@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class ButtonComponent extends Utils {
     final String name;
@@ -53,7 +54,9 @@ public abstract class ButtonComponent extends Utils {
 
         var member = event.getMember();
         if (member == null) return;
-        if (isNotSameVoice(member.getVoiceState(), event.getMember().getVoiceState(), event.getMessage())) return;
+
+
+        if (isNotSameVoice(member.getVoiceState(), Objects.requireNonNull(event.getGuild()).getSelfMember().getVoiceState(), event.getMessage())) return;
 
         buttonObject.callback(client, event);
     }

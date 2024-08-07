@@ -69,11 +69,8 @@ public class TrackScheduler extends Utils {
         }
 
         if (endReason.getMayStartNext()) {
-            if (loopMode == LoopMode.TRACK) {
-                startTrack(event.getTrack().makeClone());
-            } else {
-                nextTrack();
-            }
+            if (loopMode == LoopMode.TRACK) startTrack(event.getTrack().makeClone());
+            else nextTrack();
         }
     }
     ////////////////////////////////////////
@@ -89,9 +86,7 @@ public class TrackScheduler extends Utils {
                         this.queue.offer(track);
                     }
                 },
-                () -> {
-                    this.startTrack(track);
-                }
+                () -> this.startTrack(track)
         );
     }
 
@@ -104,9 +99,7 @@ public class TrackScheduler extends Utils {
                         this.startTrack(this.queue.poll());
                     }
                 },
-                () -> {
-                    this.startTrack(this.queue.poll());
-                }
+                () -> this.startTrack(this.queue.poll())
         );
     }
     //////////////////////////////////////////////
@@ -128,6 +121,7 @@ public class TrackScheduler extends Utils {
             guildMusicManager.metadata.sendMessageEmbeds(
                     new EmbedBuilder()
                             .setAuthor("Không còn bài hát nào trong lịch sử!")
+                            .setColor(Color.RED)
                             .build()
             ).queue();
         }
@@ -160,6 +154,7 @@ public class TrackScheduler extends Utils {
             guildMusicManager.metadata.sendMessageEmbeds(
                     new EmbedBuilder()
                             .setAuthor("Không còn bài hát nào trong danh sách!")
+                            .setColor(Color.RED)
                             .build()
             ).queue();
         }

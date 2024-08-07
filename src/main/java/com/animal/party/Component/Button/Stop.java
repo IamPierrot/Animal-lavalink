@@ -7,21 +7,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class Skip extends ButtonComponent {
+public class Stop extends ButtonComponent {
 
     static {
-        registerComponent(new Skip());
+        registerComponent(new Stop());
     }
 
-    Skip() {
-        super("skip");
-        voiceChannel = true;
+    Stop() {
+        super("stop");
     }
 
     @Override
     public void callback(LavalinkClient client, @NotNull ButtonInteractionEvent event) {
-        getOrCreateMusicManager(Objects.requireNonNull(event.getGuild()).getIdLong(), event.getChannel()).skip();
-        event.getMessage().reply("Bỏ qua bài phát hiện tại!").queue();
-        event.getMessage().delete().queue();
+        getOrCreateMusicManager(Objects.requireNonNull(event.getGuild()).getIdLong(), event.getChannel()).stop();
+        event.getJDA().getDirectAudioController().disconnect(event.getGuild());
+        event.getMessage().reply("Đã dọn sách hàng chờ và xin chào tạm biệt <3").queue();
     }
 }
